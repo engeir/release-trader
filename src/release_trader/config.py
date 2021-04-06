@@ -1,6 +1,9 @@
 """Global constants used for logging into an account."""
 import os
 
+# TODO: Suggested other solution with a .key file:
+# https://www.geeksforgeeks.org/create-a-credential-file-using-python/
+
 # import subprocess as sp
 # from subprocess import check_output
 
