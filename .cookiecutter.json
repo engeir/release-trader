@@ -1,0 +1,11 @@
+{
+  "_template": "gh:cjolowicz/cookiecutter-hypermodern-python",
+  "author": "Eirik Rolland Enger",
+  "email": "release.trader@use.startmail.com",
+  "friendly_name": "Release Trader",
+  "github_user": "engeir",
+  "license": "MIT",
+  "package_name": "release_trader",
+  "project_name": "release-trader",
+  "version": "0.0.1"
+}
