@@ -9,9 +9,6 @@ homepage = "https://github.com/engeir/release-trader"
 repository = "https://github.com/engeir/release-trader"
 documentation = "https://release-trader.readthedocs.io"
 classifiers = [
-    "Programming Language :: Python :: 3.6",
-    "Programming Language :: Python :: 3.7",
-    "Programming Language :: Python :: 3.8",
     "Programming Language :: Python :: 3.9",
 ]
 
@@ -20,7 +17,9 @@ Changelog = "https://github.com/engeir/release-trader/releases"
 
 [tool.poetry.dependencies]
 python = "^3.9.2"
-click = "^7.0"
+ccxt = "^1.47.61"
+requests = "^2.25.1"
+beautifulsoup4 = "^4.9.3"
 
 [tool.poetry.dev-dependencies]
 pytest = "^6.2.2"
@@ -45,6 +44,7 @@ pre-commit-hooks = "^3.4.0"
 sphinx-rtd-theme = "^0.5.1"
 sphinx-click = "^2.6.0"
 Pygments = "^2.8.1"
+nox = "^2020.12.31"
 
 [tool.poetry.scripts]
 release-trader = "release_trader.__main__:main"

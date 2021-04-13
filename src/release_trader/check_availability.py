@@ -1,6 +1,7 @@
 """Check if websites trade new coins and return valid coins."""
 import ccxt
-import webscaper as ws
+
+import release_trader.webscaper as ws
 
 websites = [
     # 'binance',
@@ -31,11 +32,11 @@ def check_websites(crypto: list) -> list:
                     print(f"Found {m}, ready to trade!")
                     found.append(msp[0])
                     pairs.append(m)
-            elif "ETH" in msp[1]:
-                if msp[0] in crypto:
-                    print(f"Found {m}, ready to trade!")
-                    found.append(msp[0])
-                    pairs.append(m)
+            # elif "ETH" in msp[1]:
+            #     if msp[0] in crypto:
+            #         print(f"Found {m}, ready to trade!")
+            #         found.append(msp[0])
+            #         pairs.append(m)
         print(f"No mathch for coin(s) {list(set(crypto) - set(found))}")
     # TODO: history.txt should perhaps be binary/zipped so it is harder to change it.
     with open("src/release_trader/history.txt", "w") as f:
@@ -59,7 +60,7 @@ def new_crypto(verbose=False) -> list:
     """
     crypto_b = ws.navigate_binance()
     crypto_c = ws.navigate_coinbase()
-    crypto = crypto_b + crypto_c if not len(crypto_b) == len(crypto_c) == 0 else None
+    crypto = crypto_b + crypto_c if not len(crypto_b) == len(crypto_c) == 0 else []
     allready_in = {line.strip() for line in open("src/release_trader/history.txt")}
     crypto_test = set(crypto)
     intersect = list(allready_in & crypto_test)

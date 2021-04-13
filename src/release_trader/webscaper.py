@@ -11,7 +11,7 @@ import requests
 from bs4 import BeautifulSoup
 
 
-def navigate_binance(verbose=False) -> list:
+def navigate_binance(verbose=False, check=False) -> list:
     """Navigate to Binance's web page where new coins are announced."""
     headers = {
         "User-Agent": "Mozilla/5.0 (Windows NT 5.1; rv:7.0.1) \
@@ -20,6 +20,8 @@ Gecko/20100101 Firefox/7.0.1"
     results = requests.get(
         "https://www.binance.com/en/support/announcement/c-48", headers=headers
     )
+    if check:
+        return [results.ok]
     src = results.content
     soup = BeautifulSoup(src, "lxml")
     txt = soup.find("a", class_="css-1ej4hfo").text.upper()
