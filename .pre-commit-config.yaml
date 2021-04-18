@@ -45,6 +45,12 @@ repos:
         language: system
         types: [text]
         stages: [commit, push, manual]
+      - id: pytest
+        name: pytest
+        entry: pytest
+        language: system
+        types: [python]
+        stages: [commit, push, manual]
   - repo: https://github.com/prettier/pre-commit
     rev: v2.1.2
     hooks:

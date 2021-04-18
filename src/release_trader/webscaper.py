@@ -11,11 +11,22 @@ import requests
 from bs4 import BeautifulSoup
 
 
-def navigate_binance(verbose=False, check=False) -> list:
-    """Navigate to Binance's web page where new coins are announced."""
+def navigate_binance(verbose: bool = False, check: bool = False) -> list[str]:
+    """Navigate to Binance's web page where new coins are announced.
+
+    Args:
+        verbose: bool
+            Print info about what is found
+        check: bool
+            Check if the request was successful without errors
+
+    Returns:
+        crypto: list[str]
+            List of crypto currencies found on binance's website
+    """
     headers = {
-        "User-Agent": "Mozilla/5.0 (Windows NT 5.1; rv:7.0.1) \
-Gecko/20100101 Firefox/7.0.1"
+        "User-Agent": "Mozilla/5.0 (Windows NT 5.1; rv:7.0.1) "
+        + "Gecko/20100101 Firefox/7.0.1"
     }
     results = requests.get(
         "https://www.binance.com/en/support/announcement/c-48", headers=headers
@@ -35,60 +46,75 @@ Gecko/20100101 Firefox/7.0.1"
     return crypto
 
 
-def navigate_coinbase(verbose=False) -> list:
-    """Navigate to Coinbase's web page where new coins are announced."""
+def navigate_coinbase(verbose: bool = False, check: bool = False) -> list[str]:
+    """Navigate to Coinbase's web page where new coins are announced.
+
+    Args:
+        verbose: bool
+            Print info about what is found
+        check: bool
+            Check if the request was successful without errors
+
+    Returns:
+        crypto: list[str]
+            List of crypto currencies found on coinbase's website
+    """
     headers = {
-        "User-Agent": "Mozilla/5.0 (Windows NT 5.1; rv:7.0.1) \
-Gecko/20100101 Firefox/7.0.1"
+        "User-Agent": "Mozilla/5.0 (Windows NT 5.1; rv:7.0.1) "
+        + "Gecko/20100101 Firefox/7.0.1"
     }
     results = requests.get("https://blog.coinbase.com/", headers=headers)
+    if check:
+        return [results.ok]
     src = results.content
     soup = BeautifulSoup(src, "lxml")
     main = soup.find_all(
         "div",
-        class_="col u-xs-marginBottom10 u-paddingLeft9 u-paddingRight12 \
-u-paddingTop0 u-sm-paddingTop20 u-paddingBottom25 \
-u-size4of12 u-xs-size12of12 u-marginBottom30",
+        class_="col u-xs-marginBottom10 u-paddingLeft9 u-paddingRight12 "
+        + "u-paddingTop0 u-sm-paddingTop20 u-paddingBottom25 "
+        + "u-size4of12 u-xs-size12of12 u-marginBottom30",
     )
     articles = soup.find_all(
         "div",
-        class_="col u-xs-size12of12 js-trackPostPresentation u-paddingLeft12 \
-u-marginBottom15 u-paddingRight12 u-size4of12",
+        class_="col u-xs-size12of12 js-trackPostPresentation u-paddingLeft12 "
+        + "u-marginBottom15 u-paddingRight12 u-size4of12",
     )
     crypto = []
     for item in main:
         txt = item.find(
             "div",
-            class_="u-letterSpacingTight u-lineHeightTighter u-breakWord \
-u-textOverflowEllipsis u-lineClamp4 u-fontSize30 \
-u-size12of12 u-xs-size12of12 u-xs-fontSize24",
+            class_="u-letterSpacingTight u-lineHeightTighter u-breakWord "
+            + "u-textOverflowEllipsis u-lineClamp4 u-fontSize30 "
+            + "u-size12of12 u-xs-size12of12 u-xs-fontSize24",
         ).text.upper()
         the_date = item.find(
             "div",
-            class_="ui-caption u-fontSize12 u-baseColor--textNormal \
-u-textColorNormal js-postMetaInlineSupplemental",
+            class_="ui-caption u-fontSize12 u-baseColor--textNormal "
+            + "u-textColorNormal js-postMetaInlineSupplemental",
         ).text
         crypto = check_coinbase_str(the_date, txt, crypto, verbose)
     for item in articles:
         txt = item.find(
             "div",
-            class_="u-letterSpacingTight u-lineHeightTighter u-breakWord \
-u-textOverflowEllipsis u-lineClamp3 u-fontSize24",
+            class_="u-letterSpacingTight u-lineHeightTighter u-breakWord "
+            + "u-textOverflowEllipsis u-lineClamp3 u-fontSize24",
         ).text.upper()
         the_date = item.find(
             "div",
-            class_="ui-caption u-fontSize12 u-baseColor--textNormal \
-u-textColorNormal js-postMetaInlineSupplemental",
+            class_="ui-caption u-fontSize12 u-baseColor--textNormal "
+            + "u-textColorNormal js-postMetaInlineSupplemental",
         ).text
         crypto = check_coinbase_str(the_date, txt, crypto, verbose)
     return crypto
 
 
-def check_coinbase_str(the_date: str, txt: str, crypto: list, verbose: bool) -> list:
+def check_coinbase_str(
+    dates: str, txt: str, crypto: list[str], verbose: bool
+) -> list[str]:
     """Check if the text received from Coinbase includes our special keywords.
 
     Args:
-        the_date: the date when the blogpost on Coinbase was written
+        dates: the date when the blogpost on Coinbase was written
         txt: the title of the Coinbase blogpost
         crypto: list with new coins found in the Coinbase title
         verbose: whether to print info to stdout or not
@@ -96,7 +122,7 @@ def check_coinbase_str(the_date: str, txt: str, crypto: list, verbose: bool) -> 
     Returns:
         list: list with new coins found in the Coinbase title
     """
-    the_date = the_date.split()
+    the_date = dates.split()
     if len(the_date) == 2:
         upload_time = datetime.strptime(
             f"{the_date[0]} {the_date[1]}, 2021", "%b %d, %Y"
