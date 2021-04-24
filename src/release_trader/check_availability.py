@@ -11,7 +11,9 @@ websites = [
 ]
 
 
-def check_websites(crypto: list[str], verbose: bool = False) -> list[str]:
+def check_websites(
+    crypto: list[str], verbose: bool = False, testing: bool = False
+) -> list[str]:
     """Check if websites (gate.io) lists the newly found coins.
 
     Args:
@@ -19,6 +21,8 @@ def check_websites(crypto: list[str], verbose: bool = False) -> list[str]:
             List of coins to check if they are tradeable on gate.io.
         verbose: bool
             If True, print what is going on in more detail
+        testing: bool
+            Do not write to the history file if the test suit is calling the function
 
     Returns:
         pairs: list
@@ -44,12 +48,12 @@ def check_websites(crypto: list[str], verbose: bool = False) -> list[str]:
             line.strip() for line in open("src/release_trader/history.txt")
         )
         for found_coin in crypto:
-            if found_coin not in allready_in:
+            if found_coin not in allready_in and not testing:
                 f.write(f"{found_coin}\n")
     return pairs
 
 
-def new_crypto(verbose=False) -> list[str]:
+def new_crypto(verbose=False, test_coin: str = "none") -> list[str]:
     """Check if coins have been traded allready.
 
     A history file listing all coins that have been found by the program is
@@ -58,14 +62,21 @@ def new_crypto(verbose=False) -> list[str]:
     Args:
         verbose: bool
             If True, print more info.
+        test_coin: str
+            Used within the test suite. Send in a dummy coin to see if it is removed
 
     Returns:
         list: Coins that are new to the program.
     """
     # Get the newly listed crypto from both websites and combine
-    crypto_b = ws.navigate_binance()
-    crypto_c = ws.navigate_coinbase()
-    crypto = crypto_b + crypto_c  # if not len(crypto_b) == len(crypto_c) == 0 else []
+    if test_coin == "none":
+        crypto_b = ws.navigate_binance()
+        crypto_c = ws.navigate_coinbase()
+        crypto = (
+            crypto_b + crypto_c
+        )  # if not len(crypto_b) == len(crypto_c) == 0 else []
+    else:
+        crypto = [test_coin]
 
     # Check the history file
     allready_in = {line.strip() for line in open("src/release_trader/history.txt")}
