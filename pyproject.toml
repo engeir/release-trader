@@ -17,7 +17,7 @@ Changelog = "https://github.com/engeir/release-trader/releases"
 
 [tool.poetry.dependencies]
 python = "^3.9.2"
-ccxt = "^1.47.61"
+ccxt = "^1.49.52"
 requests = "^2.25.1"
 beautifulsoup4 = "^4.9.3"
 
