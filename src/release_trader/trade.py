@@ -1,10 +1,16 @@
 """Run the trade functions based on information gained from the other scripts."""
 import configparser
-from threading import Timer
 
 import ccxt
 
-import release_trader.check_availability as ca
+# import time
+# from threading import Timer
+
+# import release_trader.check_availability as ca
+
+# import logging
+
+# import gate_api
 
 config = configparser.ConfigParser()
 config.read_file(open(r"../.user.cfg"))
@@ -14,15 +20,29 @@ LOGIN_Gv4 = {
 }
 
 
-def buy_crypto():
-    """Place a buy order with a limit sell order on new coins."""
-    _ = ccxt.gateio(
+def ratelimit():
+    """Print the rate limit of API calls."""
+    gateio = ccxt.gateio(
         {"apiKey": LOGIN_Gv4["API_KEY"], "secret": LOGIN_Gv4["SECRET_KEY"]}
     )  # gateio
-    _ = ca.new_crypto()  # crypto
+    print(gateio.rateLimit)
+
+
+def buy_crypto():
+    """Place a buy order with a limit sell order on new coins."""
+    pass
+    # gateio = ccxt.gateio(
+    #     {"apiKey": LOGIN_Gv4["API_KEY"], "secret": LOGIN_Gv4["SECRET_KEY"]}
+    # )  # gateio
+    # crypto = ca.new_crypto()  # crypto
+
     # Here we want to buy the currency we found as a market buy order with a
     # stop loss. We can potentially (actually it is very likely) buy several
     # coins at the same time (might as well trash all but one?)
+    # for symbol in crypto:
+    #     # time.sleep(gateio.rateLimit / 1000)  # The rateLimit is 1000
+    #     time.sleep(1)
+    # OLD
     # for symbol in crypto:
     #     time.sleep(gateio.rateLimit / 1000)
     #     gateio.create_market_buy_order(
@@ -31,7 +51,7 @@ def buy_crypto():
     #         type='stop_loss_limit',
     #         params={'stopPrice': .95 * }
     #     )
-    # gateio.create_order
+
     # After we have bought something we want to check if the price of our new
     # coin(s) has increased with at least 10 %
     # while not gateio.has['fetch_balance']:
@@ -47,9 +67,10 @@ def buy_crypto():
 
     # gateio.create_limit_sell_order(symbol, amount, price)
 
-    # This will just call this function again in five seconds.
-    Timer(5, buy_crypto).start()
+    # This will call this function again in five seconds.
+    # Timer(5, buy_crypto).start()
 
 
 if __name__ == "__main__":
-    buy_crypto()
+    ratelimit()
+    # buy_crypto()

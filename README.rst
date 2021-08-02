@@ -44,6 +44,8 @@ Requirements
 
 * TODO
 
+  libxslt-dev
+
 
 Installation
 ------------

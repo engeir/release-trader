@@ -20,6 +20,8 @@ python = "^3.9.2"
 ccxt = "^1.47.61"
 requests = "^2.25.1"
 beautifulsoup4 = "^4.9.3"
+gate-api = "^4.20.1"
+lxml = "^4.6.3"
 
 [tool.poetry.dev-dependencies]
 pytest = "^6.2.2"
