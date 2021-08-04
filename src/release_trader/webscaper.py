@@ -28,11 +28,14 @@ def navigate_binance(verbose: bool = False, check: bool = False) -> list[str]:
         "User-Agent": "Mozilla/5.0 (Windows NT 5.1; rv:7.0.1) "
         + "Gecko/20100101 Firefox/7.0.1"
     }
-    results = requests.get(
-        "https://www.binance.com/en/support/announcement/c-48", headers=headers
-    )
+    try:
+        results = requests.get(
+            "https://www.binance.com/en/support/announcement/c-48", headers=headers
+        )
+    except Exception:
+        return []
     if check:
-        return [results.ok]
+        return [str(results.ok)]
     src = results.content
     soup = BeautifulSoup(src, "lxml")
     txt = soup.find("a", class_="css-1ej4hfo").text.upper()
@@ -63,9 +66,12 @@ def navigate_coinbase(verbose: bool = False, check: bool = False) -> list[str]:
         "User-Agent": "Mozilla/5.0 (Windows NT 5.1; rv:7.0.1) "
         + "Gecko/20100101 Firefox/7.0.1"
     }
-    results = requests.get("https://blog.coinbase.com/", headers=headers)
+    try:
+        results = requests.get("https://blog.coinbase.com/", headers=headers)
+    except Exception:
+        return []
     if check:
-        return [results.ok]
+        return [str(results.ok)]
     src = results.content
     soup = BeautifulSoup(src, "lxml")
     main = soup.find_all(

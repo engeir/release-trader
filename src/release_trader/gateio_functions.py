@@ -57,7 +57,7 @@ def list_spot_accounts() -> list:
 
     Examples:
     >>> list_spot_accounts()
-    [["BTC", 0.002], ["USDT"], 45.013]
+    [["BTC", 0.002], ["USDT", 45.013]]
     """
     host = "https://api.gateio.ws"
     prefix = "/api/v4"
