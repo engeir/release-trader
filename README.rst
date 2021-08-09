@@ -1,15 +1,12 @@
 Release Trader
 ==============
 
-|PyPI| |Python Version| |License|
+|Python Version| |License|
 
-|Read the Docs| |Tests| |Codecov|
+|Read the Docs| |Tests|
 
 |pre-commit| |Black|
 
-.. |PyPI| image:: https://img.shields.io/pypi/v/release-trader.svg
-   :target: https://pypi.org/project/release-trader/
-   :alt: PyPI
 .. |Python Version| image:: https://img.shields.io/pypi/pyversions/release-trader
    :target: https://pypi.org/project/release-trader
    :alt: Python Version
@@ -22,9 +19,6 @@ Release Trader
 .. |Tests| image:: https://github.com/engeir/release-trader/workflows/Tests/badge.svg
    :target: https://github.com/engeir/release-trader/actions?workflow=Tests
    :alt: Tests
-.. |Codecov| image:: https://codecov.io/gh/engeir/release-trader/branch/main/graph/badge.svg
-   :target: https://codecov.io/gh/engeir/release-trader
-   :alt: Codecov
 .. |pre-commit| image:: https://img.shields.io/badge/pre--commit-enabled-brightgreen?logo=pre-commit&logoColor=white
    :target: https://github.com/pre-commit/pre-commit
    :alt: pre-commit
