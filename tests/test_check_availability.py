@@ -13,4 +13,4 @@ def test_check_websites():
 def test_new_crypto():
     """Test for function new_crypto."""
     test_coin = "BTC"
-    assert ca.new_crypto(test_coin) == []
+    assert ca.new_crypto(test_coin=test_coin) == []

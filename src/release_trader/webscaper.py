@@ -4,10 +4,11 @@ New coins that will be available for trading are announced on two web sites
 run by Binance and Coinbase, which are scraped continuously to quickly
 buy these on Gate.io and sell them with profit from the hype.
 """
-import sys
-import re
-from datetime import datetime  # , timedelta
 import logging
+import re
+import sys
+from datetime import datetime
+from datetime import timedelta
 
 import requests
 from bs4 import BeautifulSoup
@@ -28,6 +29,7 @@ console_handler = logging.StreamHandler(sys.stdout)
 console_handler.setFormatter(log_formatter)
 console_handler.setLevel(logging.DEBUG)
 root_logger.addHandler(console_handler)
+
 
 def navigate_binance(verbose: bool = False, check: bool = False) -> list[str]:
     """Navigate to Binance's web page where new coins are announced.
@@ -94,37 +96,51 @@ def navigate_coinbase(verbose: bool = False, check: bool = False) -> list[str]:
         return [str(results.ok)]
     src = results.content
     soup = BeautifulSoup(src, "lxml")
-    main = soup.find_all(
-        "div",
-        class_="col u-xs-marginBottom10 u-paddingLeft9 u-paddingRight12 "
-        + "u-paddingTop0 u-sm-paddingTop20 u-paddingBottom25 "
-        + "u-size4of12 u-xs-size12of12 u-marginBottom30",
-    )
+    # main = soup.find_all(
+    #     "div",
+    #     class_="col u-xs-marginBottom10 u-paddingLeft9 u-paddingRight12 "
+    #     + "u-paddingTop0 u-sm-paddingTop20 u-paddingBottom25 "
+    #     + "u-size4of12 u-xs-size12of12 u-marginBottom30",
+    # )
+    # articles = soup.find_all(
+    #     "div",
+    #     class_="col u-xs-size12of12 js-trackPostPresentation u-paddingLeft12 "
+    #     + "u-marginBottom15 u-paddingRight12 u-size4of12",
+    # )
+    # articles = soup.find_all(
+    #     "div",
+    #     class_="postArticle-content",
+    # )
     articles = soup.find_all(
         "div",
-        class_="col u-xs-size12of12 js-trackPostPresentation u-paddingLeft12 "
-        + "u-marginBottom15 u-paddingRight12 u-size4of12",
+        class_="u-paddingTop20 u-paddingBottom25 u-borderBottomLight js-block",
     )
     crypto = []
-    for item in main:
-        txt = item.find(
-            "div",
-            class_="u-letterSpacingTight u-lineHeightTighter u-breakWord "
-            + "u-textOverflowEllipsis u-lineClamp4 u-fontSize30 "
-            + "u-size12of12 u-xs-size12of12 u-xs-fontSize24",
-        ).text.upper()
-        the_date = item.find(
-            "div",
-            class_="ui-caption u-fontSize12 u-baseColor--textNormal "
-            + "u-textColorNormal js-postMetaInlineSupplemental",
-        ).text
-        crypto = check_coinbase_str(the_date, txt, crypto, verbose)
+    # for item in main:
+    #     txt = item.find(
+    #         "div",
+    #         class_="u-letterSpacingTight u-lineHeightTighter u-breakWord "
+    #         + "u-textOverflowEllipsis u-lineClamp4 u-fontSize30 "
+    #         + "u-size12of12 u-xs-size12of12 u-xs-fontSize24",
+    #     ).text.upper()
+    #     the_date = item.find(
+    #         "div",
+    #         class_="ui-caption u-fontSize12 u-baseColor--textNormal "
+    #         + "u-textColorNormal js-postMetaInlineSupplemental",
+    #     ).text
+    #     crypto = check_coinbase_str(the_date, txt, crypto, verbose)
     for item in articles:
-        txt = item.find(
-            "div",
-            class_="u-letterSpacingTight u-lineHeightTighter u-breakWord "
-            + "u-textOverflowEllipsis u-lineClamp3 u-fontSize24",
-        ).text.upper()
+        # txt = item.find(
+        #     "div",
+        #     class_="u-letterSpacingTight u-lineHeightTighter u-breakWord "
+        #     + "u-textOverflowEllipsis u-lineClamp3 u-fontSize24",
+        # ).text.upper()
+        cls1 = "graf graf--h3 graf-after--figure graf--trailing graf--title"
+        cls2 = "graf graf--h3 graf-after--figure graf--title"
+        try:
+            txt = item.find("h3", class_=cls1).text.upper()
+        except Exception:
+            txt = item.find("h3", class_=cls2).text.upper()
         the_date = item.find(
             "div",
             class_="ui-caption u-fontSize12 u-baseColor--textNormal "
@@ -150,6 +166,8 @@ def check_coinbase_str(
         list: list with new coins found in the Coinbase title
     """
     the_date = dates.split()
+    # A long, long time ago
+    upload_time = datetime.strptime("May 1, 2000", "%b %d, %Y")
     if len(the_date) == 2:
         upload_time = datetime.strptime(
             f"{the_date[0]} {the_date[1]}, 2021", "%b %d, %Y"
@@ -160,7 +178,8 @@ def check_coinbase_str(
             f"{the_date[0]} {the_date[1]} {the_date[2]}", "%b %d, %Y"
         )
         # now = datetime.today() - timedelta(days=20)
-    if "ARE LAUNCHING" in txt:
+    recent_enough = datetime.today() - upload_time < timedelta(days=2)
+    if "ARE LAUNCHING" in txt and recent_enough:
         for t in txt.split():
             if "(" in t:
                 crypto.append(str("".join(re.split("[^a-zA-Z]*", t))))
@@ -171,6 +190,7 @@ def check_coinbase_str(
 
 
 if __name__ == "__main__":
-    res_b = navigate_binance()
-    res_c = navigate_coinbase()
-    print(res_b, res_c)
+    res_b = navigate_binance(verbose=True)
+    res_c = navigate_coinbase(verbose=True)
+    print(res_b)
+    print(res_c)

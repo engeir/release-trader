@@ -29,6 +29,7 @@ console_handler.setFormatter(log_formatter)
 console_handler.setLevel(logging.DEBUG)
 root_logger.addHandler(console_handler)
 
+
 def check_websites(
     crypto: list[str], verbose: bool = False, testing: bool = False
 ) -> list[str]:
@@ -93,9 +94,7 @@ def new_crypto(verbose=False, test_coin: str = "none") -> list[str]:
     if test_coin == "none":
         crypto_b = ws.navigate_binance()
         crypto_c = ws.navigate_coinbase()
-        crypto = (
-            crypto_b + crypto_c
-        )  # if not len(crypto_b) == len(crypto_c) == 0 else []
+        crypto = crypto_b + crypto_c
     else:
         crypto = [test_coin]
 
@@ -106,9 +105,8 @@ def new_crypto(verbose=False, test_coin: str = "none") -> list[str]:
     if len(intersect) == 0:
         new_coin = crypto
     else:
-        for item in crypto:
-            if item not in intersect:
-                new_coin.append(item)
+        for item in set(crypto) - intersect:
+            new_coin.append(item)
 
     # Check binance and coinbase
     for w in ["binance", "coinbase"]:
