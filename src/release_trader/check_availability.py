@@ -1,4 +1,7 @@
 """Check if websites trade new coins and return valid coins."""
+import logging
+import sys
+
 import ccxt
 
 import release_trader.webscaper as ws
@@ -10,6 +13,21 @@ websites = [
     # 'kraken'
 ]
 
+logging.basicConfig(
+    level=logging.INFO,
+)
+log_formatter = logging.Formatter(
+    "%(asctime)s [%(threadName)-12.12s] [%(levelname)-5.5s]  %(message)s"
+)
+root_logger = logging.getLogger(__name__)
+file_handler = logging.FileHandler("{0}/{1}.log".format(".", "release_trader"))
+file_handler.setFormatter(log_formatter)
+root_logger.addHandler(file_handler)
+
+console_handler = logging.StreamHandler(sys.stdout)
+console_handler.setFormatter(log_formatter)
+console_handler.setLevel(logging.DEBUG)
+root_logger.addHandler(console_handler)
 
 def check_websites(
     crypto: list[str], verbose: bool = False, testing: bool = False
@@ -31,17 +49,20 @@ def check_websites(
     found = []
     pairs = []
     for w in websites:
-        e = getattr(ccxt, w)()
-        if verbose:
-            print(f"Searching among {len(e.load_markets())} markets on {w}...")
-        for m in e.load_markets():
-            msp = m.split("/")
-            if "USDT" in msp[1]:
-                if msp[0] in crypto:
-                    print(f"Found {m}, ready to trade!")
-                    found.append(msp[0])
-                    pairs.append(m)
-        print(f"No mathch for coin(s) {list(set(crypto) - set(found))}")
+        try:
+            e = getattr(ccxt, w)()
+            if verbose:
+                print(f"Searching among {len(e.load_markets())} markets on {w}...")
+            for m in e.load_markets():
+                msp = m.split("/")
+                if "USDT" in msp[1]:
+                    if msp[0] in crypto:
+                        print(f"Found {m}, ready to trade!")
+                        found.append(msp[0])
+                        pairs.append(m)
+            print(f"No mathch for coin(s) {list(set(crypto) - set(found))}")
+        except Exception:
+            root_logger.warning(f"Could not get markets/list of coins from {w}")
     # TODO: history.txt should perhaps be binary/zipped so it is harder to change it.
     with open("src/release_trader/history.txt", "a") as f:
         allready_in = list(
@@ -91,11 +112,14 @@ def new_crypto(verbose=False, test_coin: str = "none") -> list[str]:
 
     # Check binance and coinbase
     for w in ["binance", "coinbase"]:
-        e = getattr(ccxt, w)()
-        markets = set(e.load_markets())
-        for coin in new_coin:
-            if f"{coin}/USDT" in markets:
-                new_coin.remove(coin)
+        try:
+            e = getattr(ccxt, w)()
+            markets = set(e.load_markets())
+            for coin in new_coin:
+                if f"{coin}/USDT" in markets:
+                    new_coin.remove(coin)
+        except Exception:
+            root_logger.warning(f"Could not get markets/list of coins from {w}")
 
     # Check if the coins are listed on gateio and more, then return coins that
     # are tradeable

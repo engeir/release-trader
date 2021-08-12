@@ -8,3 +8,5 @@
 /src/*.egg-info/
 __pycache__/
 /.vim
+
+release-trader.log

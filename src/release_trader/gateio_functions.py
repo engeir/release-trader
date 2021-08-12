@@ -7,6 +7,7 @@ import hashlib
 import hmac
 import logging
 import time
+import sys
 
 import requests
 from gate_api import ApiClient
@@ -18,9 +19,21 @@ from gate_api import SpotApi
 
 # from config import RunConfig
 
-# logging.basicConfig(filename='example.log', encoding='utf-8', level=logging.DEBUG)
-logger = logging.getLogger(__name__)
-# logger.addHandler(logging.StreamHandler())
+logging.basicConfig(
+    level=logging.INFO,
+)
+log_formatter = logging.Formatter(
+    "%(asctime)s [%(threadName)-12.12s] [%(levelname)-5.5s]  %(message)s"
+)
+root_logger = logging.getLogger(__name__)
+file_handler = logging.FileHandler("{0}/{1}.log".format(".", "release_trader"))
+file_handler.setFormatter(log_formatter)
+root_logger.addHandler(file_handler)
+
+console_handler = logging.StreamHandler(sys.stdout)
+console_handler.setFormatter(log_formatter)
+console_handler.setLevel(logging.DEBUG)
+root_logger.addHandler(console_handler)
 
 config = configparser.ConfigParser()
 config.read_file(open(r"../.user.cfg"))
@@ -81,7 +94,7 @@ def list_spot_accounts() -> list:
 
 def move_spot_usdt_to_btc() -> None:
     """Move all available USDT to BTC at the last price found on GateIo."""
-    logger.info("Moving all USDT to BTC on spot account")
+    root_logger.info("Moving all USDT to BTC on spot account")
     host = "https://api.gateio.ws"
     prefix = "/api/v4"
     headers = {"Accept": "application/json", "Content-Type": "application/json"}
@@ -118,14 +131,14 @@ def move_spot_usdt_to_btc() -> None:
 
 def move_all_spot_to_btc():
     """Move all coins to BTC at the last price found on GateIo."""
-    logger.info("Moving all spot accounts to BTC")
+    root_logger.info("Moving all spot accounts to BTC")
     move_all_spot_to_usdt()
     move_spot_usdt_to_btc()
 
 
 def move_all_spot_to_usdt() -> None:
     """Move all coins to USDT at the last price found on GateIo."""
-    logger.info("Moving all spot accounts to USDT")
+    root_logger.info("Moving all spot accounts to USDT")
     host = "https://api.gateio.ws"
     prefix = "/api/v4"
     headers = {"Accept": "application/json", "Content-Type": "application/json"}
@@ -184,6 +197,11 @@ def get_last_price(pair) -> float:
     prefix = "/api/v4"
     url = "/spot/accounts"
     query_param = ""
+    print(pair)
+    if "/" in pair:
+        pair_list = pair.split("/")
+        pair = f"{pair_list[0]}_{pair_list[1]}"
+        print(pair)
     # for `gen_sign` implementation, refer to section `Authentication` above
     sign_headers = gen_sign("GET", prefix + url, query_param)
     config = Configuration(
@@ -193,7 +211,8 @@ def get_last_price(pair) -> float:
     tickers = spot_api.list_tickers(currency_pair=pair)
     # assert len(tickers) == 1
     last_price = tickers[0].last
-    return last_price
+    # Multiplying with 1.1 to buy up faster
+    return float(last_price) * 1.1
 
 
 def buy_coin_with_usdt(coin: str) -> float:
@@ -214,7 +233,7 @@ def buy_coin_with_usdt(coin: str) -> float:
     >>> buy_coin_with_usdt("LTC")
     144.02
     """
-    logger.info("Moving all USDT to `coin` on spot account")
+    root_logger.info("Moving all USDT to `coin` on spot account")
     host = "https://api.gateio.ws"
     prefix = "/api/v4"
     headers = {"Accept": "application/json", "Content-Type": "application/json"}

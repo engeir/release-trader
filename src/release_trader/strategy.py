@@ -61,12 +61,14 @@ def buy_on_release() -> None:
         for symbol in crypto:
             # time.sleep(gateio.rateLimit / 1000)  # The rateLimit is 1000
             time.sleep(1)
-            price = gfunc.buy_coin_with_usdt(symbol)
+            s_pair = symbol.split("/")
+            coin = s_pair[0] if s_pair[0] != "USDT" else s_pair[1]
+            price = gfunc.buy_coin_with_usdt(coin)
             root_logger.info(f"Bought {symbol}. Writing to open_trade.txt")
             with open("src/release_trader/open_trade.txt", "w") as f:
                 # The coin I am buying is written to a file for easy access when I am
                 # about to sell. There has to be a better way, but it works.
-                f.write(f"{symbol}\n")
+                f.write(f"{coin}\n")
                 f.write(str(price))
             break
 

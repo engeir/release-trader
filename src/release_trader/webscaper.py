@@ -4,12 +4,30 @@ New coins that will be available for trading are announced on two web sites
 run by Binance and Coinbase, which are scraped continuously to quickly
 buy these on Gate.io and sell them with profit from the hype.
 """
+import sys
 import re
 from datetime import datetime  # , timedelta
+import logging
 
 import requests
 from bs4 import BeautifulSoup
 
+logging.basicConfig(
+    level=logging.INFO,
+)
+log_formatter = logging.Formatter(
+    "%(asctime)s [%(threadName)-12.12s] [%(levelname)-5.5s]  %(message)s"
+)
+root_logger = logging.getLogger(__name__)
+
+file_handler = logging.FileHandler("{0}/{1}.log".format(".", "release_trader"))
+file_handler.setFormatter(log_formatter)
+root_logger.addHandler(file_handler)
+
+console_handler = logging.StreamHandler(sys.stdout)
+console_handler.setFormatter(log_formatter)
+console_handler.setLevel(logging.DEBUG)
+root_logger.addHandler(console_handler)
 
 def navigate_binance(verbose: bool = False, check: bool = False) -> list[str]:
     """Navigate to Binance's web page where new coins are announced.
@@ -46,6 +64,7 @@ def navigate_binance(verbose: bool = False, check: bool = False) -> list[str]:
                 crypto.append(str("".join(re.split("[^a-zA-Z]*", t))))
         if verbose:
             print(f"Binance is listing {crypto}!")
+    root_logger.info(f"{crypto = }")
     return crypto
 
 
@@ -67,7 +86,8 @@ def navigate_coinbase(verbose: bool = False, check: bool = False) -> list[str]:
         + "Gecko/20100101 Firefox/7.0.1"
     }
     try:
-        results = requests.get("https://blog.coinbase.com/", headers=headers)
+        # results = requests.get("https://blog.coinbase.com/", headers=headers)
+        results = requests.get("https://blog.coinbase.com/latest", headers=headers)
     except Exception:
         return []
     if check:
@@ -111,6 +131,7 @@ def navigate_coinbase(verbose: bool = False, check: bool = False) -> list[str]:
             + "u-textColorNormal js-postMetaInlineSupplemental",
         ).text
         crypto = check_coinbase_str(the_date, txt, crypto, verbose)
+    root_logger.info(f"{crypto = }")
     return crypto
 
 
