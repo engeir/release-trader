@@ -32,6 +32,9 @@ Features
 
 * TODO
 
+  If I have an open trade going, there is no point in checking for new coins. I.e., check
+  with open_trades.txt before scraping the websites.
+
 
 Requirements
 ------------

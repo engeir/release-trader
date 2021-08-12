@@ -6,8 +6,8 @@ import configparser
 import hashlib
 import hmac
 import logging
-import time
 import sys
+import time
 
 import requests
 from gate_api import ApiClient
@@ -88,7 +88,7 @@ def list_spot_accounts() -> list:
         # We do not want to touch the GT account, used to pay cheaper fees
         if currency["currency"] != "GT":
             spot_account_app([currency["currency"], currency["available"]])
-        print(currency["currency"] + "\t" + currency["available"])
+        # print(currency["currency"] + "\t" + currency["available"])
     return spot_account
 
 
@@ -197,11 +197,9 @@ def get_last_price(pair) -> float:
     prefix = "/api/v4"
     url = "/spot/accounts"
     query_param = ""
-    print(pair)
     if "/" in pair:
         pair_list = pair.split("/")
         pair = f"{pair_list[0]}_{pair_list[1]}"
-        print(pair)
     # for `gen_sign` implementation, refer to section `Authentication` above
     sign_headers = gen_sign("GET", prefix + url, query_param)
     config = Configuration(
