@@ -26,6 +26,7 @@ Release Trader
    :target: https://github.com/psf/black
    :alt: Black
 
+Note:
 
     This project is largely abandoned, but I'm keeping it around for anyone who wants
     to make a forked version of it. It is capable of checking Binance and Coinbase for
@@ -33,7 +34,6 @@ Release Trader
     they increase in value by ten percent is not being handled properly.
 
     `This repository`_ basically follow the same strategy, except is uses only Binance.
-
 
 Features
 --------
