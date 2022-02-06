@@ -9,4 +9,6 @@
 __pycache__/
 /.vim
 
+.user.cfg
+
 release_trader.log

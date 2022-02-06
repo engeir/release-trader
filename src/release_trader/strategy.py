@@ -28,7 +28,7 @@ root_logger.addHandler(console_handler)
 # logger.addHandler(logging.StreamHandler())
 
 config = configparser.ConfigParser()
-config.read_file(open(r"../.user.cfg"))
+config.read_file(open(r".user.cfg"))
 LOGIN_Gv4 = {
     "API_KEY": config.get("gateio_user_config", "api_key"),
     "SECRET_KEY": config.get("gateio_user_config", "secret_key"),

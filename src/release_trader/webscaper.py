@@ -58,7 +58,10 @@ def navigate_binance(verbose: bool = False, check: bool = False) -> list[str]:
         return [str(results.ok)]
     src = results.content
     soup = BeautifulSoup(src, "lxml")
-    txt = soup.find("a", class_="css-1ej4hfo").text.upper()
+    if soup.find("a", class_="css-1ej4hfo") is None:
+        txt = ""
+    else:
+        txt = soup.find("a", class_="css-1ej4hfo").text.upper()
     crypto = []
     if "WILL LIST" in txt:
         for t in txt.split():
@@ -137,10 +140,13 @@ def navigate_coinbase(verbose: bool = False, check: bool = False) -> list[str]:
         # ).text.upper()
         cls1 = "graf graf--h3 graf-after--figure graf--trailing graf--title"
         cls2 = "graf graf--h3 graf-after--figure graf--title"
-        try:
+        if item.find("h3", class_=cls1) is None:
+            if item.find("h3", class_=cls2) is None:
+                txt = ""
+            else:
+                txt = item.find("h3", class_=cls2).text.upper()
+        else:
             txt = item.find("h3", class_=cls1).text.upper()
-        except Exception:
-            txt = item.find("h3", class_=cls2).text.upper()
         the_date = item.find(
             "div",
             class_="ui-caption u-fontSize12 u-baseColor--textNormal "

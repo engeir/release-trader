@@ -26,26 +26,33 @@ Release Trader
    :target: https://github.com/psf/black
    :alt: Black
 
+    | This project is largely abandoned, but I'm keeping it around for anyone who wants
+    | to make a forked version of it. It is capable of checking Binance and Coinbase for
+    | new coins and trade them on gate.io, but selling them with either a stop loss or as
+    | they increase in value by ten percent is not being handled properly.
+    |
+    | `This repository`_ basically follow the same strategy, except is uses only Binance.
 
 Features
 --------
 
-* TODO
-
-  If I have an open trade going, there is no point in checking for new coins. I.e., check
-  with open_trades.txt before scraping the websites.
-
-
-Requirements
-------------
-
-* TODO
-
-  libxslt-dev
+* Opens a new trade on gate.io when a new release is published on either
+  Binance or Coinbase.
+* Automatically trades back to BTC when the new coin has increased its value by ten
+  percent, with a stop loss of one percent.
 
 
 Installation
 ------------
+
+It has not yet been published on PyPI_, so to install you should use poetry_:
+
+.. code:: console
+
+    $ poetry install
+
+You should then create a file based on the example in ``.user.cfg.example`` and name it
+`.user.cfg``.`
 
 You can install *Release Trader* via pip_ from PyPI_:
 
@@ -93,6 +100,8 @@ This project was generated from `@cjolowicz`_'s `Hypermodern Python Cookiecutter
 .. _Hypermodern Python Cookiecutter: https://github.com/cjolowicz/cookiecutter-hypermodern-python
 .. _file an issue: https://github.com/engeir/release-trader/issues
 .. _pip: https://pip.pypa.io/
+.. _This repository: https://github.com/CyberPunkMetalHead/gateio-crypto-trading-bot-binance-announcements-new-coins
+.. _poetry: https://www.python-poetry.org/
 .. github-only
 .. _Contributor Guide: CONTRIBUTING.rst
 .. _Usage: https://release-trader.readthedocs.io/en/latest/usage.html
